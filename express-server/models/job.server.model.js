@@ -5,7 +5,8 @@ var Schema = mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  jobText: String
+  jobText: String,
+  status : String
 });
 
 export default mongoose.model('Job', Schema);

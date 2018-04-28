@@ -18,16 +18,29 @@ export const getJobs = (req,res) => {
 export const addJob = (io,T) => {
   let result;
   const newJob = new Job(T);
-  newJob.save((err,job) => {
-    if(err){
-      result = {'success':false,'message':'Some Error','error':err};
-      console.log(result);
-    }
-    else{
-      const result = {'success':true,'message':'Job Added Successfully',job}
-       io.emit('JobAdded', result);
-    }
-  })
+
+    Job.find({status :"print"}).exec((err,job) => {
+        if(err){
+            return res.json({'success':false,'message':'Some Error'});
+        }
+        if(job.length){
+            newJob.status ="queue";
+        }
+        else{
+            newJob.status ="print";
+        }
+    }).then(()=>{
+        newJob.save((err,job) => {
+            if(err){
+                result = {'success':false,'message':'Some Error','error':err};
+                console.log(result);
+            }
+            else{
+                const result = {'success':true,'message':'Job Added Successfully',job}
+                io.emit('JobAdded', result);
+            }
+        })
+    });
 }
 
 export const updateJob = (io,T) => {
