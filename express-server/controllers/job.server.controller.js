@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import Job from '../models/job.server.model';
 import printer from './printer.server.controller'
 
-const JobStatusEnum={PRINTING:"printing", QUEUED:"queued"}
+const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done"}
 
 /**
  * wakeup printer after crash (node.js crash)
@@ -61,7 +61,7 @@ export const popQueue=(io)=>{
 
 const printJob=(io,job)=>{
     printer.print(job).then((job)=>{
-        job.status="Done";
+        job.status=JobStatusEnum.DONE;
         updateJob(io,job);
         popQueue(io);
     })
