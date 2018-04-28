@@ -1,4 +1,6 @@
-
+/**
+ * mock for printer
+ */
 const printer= {
     print : (job) => {
         return new Promise((resolve, reject) => {

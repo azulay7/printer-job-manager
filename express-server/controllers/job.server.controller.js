@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 
 //import models
 import Job from '../models/job.server.model';
-import printer from './printer.server.controller'
+import printer from '../devices/printer'
 
 const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done"}
 
