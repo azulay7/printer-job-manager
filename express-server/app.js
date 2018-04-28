@@ -27,6 +27,7 @@ bb.extend(app);
 // socket.io connection
 io.on('connection', (socket) => {
   console.log("Connected to Socket!!"+ socket.id);
+
   // Receiving Jobs from client
   socket.on('addJob', (Job) => {
     console.log('socketData: '+JSON.stringify(Job));
@@ -45,6 +46,9 @@ io.on('connection', (socket) => {
     jobController.deleteJob(io,Job);
   });
 })
+
+//printer bootstrap
+jobController.printerWakeup(io);
 
 // allow-cors
 app.use(function(req,res,next){
