@@ -39,22 +39,33 @@ export const printerWakeup=(io)=>{
  * @param io -socket.io
  */
 export const popQueue=(io)=>{
-    Job.find({status:JobStatusEnum.QUEUED}).exec((err,jobs) => {
+    Job.find({status:JobStatusEnum.PRINTING}).exec((err,jobs) => {
         if(err){
             return res.json({'success':false,'message':'Some Error'});
         }
-        if(jobs.length){
-            let job =jobs[0];
-            job.status=JobStatusEnum.PRINTING;
-            updateJob(io,job);
-            printer.print(job).then((job)=>{
-                job.status="Done";
-                updateJob(io,job);
-                popQueue(io);
+        if(!jobs.length){ //don't popup if their is printing job
+
+            Job.find({status:JobStatusEnum.QUEUED}).exec((err,jobs) => {
+                if(err){
+                    return res.json({'success':false,'message':'Some Error'});
+                }
+                if(jobs.length){
+                    let job =jobs[0];
+                    job.status=JobStatusEnum.PRINTING;
+                    updateJob(io,job);
+                    printer.print(job).then((job)=>{
+                        job.status="Done";
+                        updateJob(io,job);
+                        popQueue(io);
+                    })
+
+                }
             })
 
         }
     })
+
+
 }
 
 /**
@@ -72,24 +83,25 @@ export const getJobs = (req,res) => {
 
 /**
  * add printer job
- * @param T -data model
+ * @param io -socket.io
+ * @param T- data model
  */
 export const addJob = (io,T) => {
   let result;
   const newJob = new Job(T);
   newJob.status =JobStatusEnum.QUEUED;
 
-    newJob.save((err,job) => {
-        if(err){
-            result = {'success':false,'message':'Some Error','error':err};
-            console.log(result);
-        }
-        else{
-            const result = {'success':true,'message':'Job Added Successfully',job}
-            io.emit('JobAdded', result);
-            popQueue(io);
-        }
-    })
+  newJob.save((err,job) => {
+      if(err){
+          result = {'success':false,'message':'Some Error','error':err};
+          console.log(result);
+      }
+      else{
+          const result = {'success':true,'message':'Job Added Successfully',job}
+          io.emit('JobAdded', result);
+          popQueue(io);
+      }
+  })
 }
 
 /**
