@@ -20,12 +20,7 @@ export const printerWakeup=(io)=>{
         if(jobs.length){
             let job=jobs[0];
             updateJob(io,job);
-            printer.print(job).then((jobDone)=>{
-                jobDone.status="Done";
-                updateJob(io,jobDone);
-
-                popQueue(io);
-            })
+            printJob(io,job);
         }
         else
         {
@@ -53,11 +48,7 @@ export const popQueue=(io)=>{
                     let job =jobs[0];
                     job.status=JobStatusEnum.PRINTING;
                     updateJob(io,job);
-                    printer.print(job).then((job)=>{
-                        job.status="Done";
-                        updateJob(io,job);
-                        popQueue(io);
-                    })
+                    printJob(io,job);
 
                 }
             })
@@ -66,6 +57,14 @@ export const popQueue=(io)=>{
     })
 
 
+}
+
+const printJob=(io,job)=>{
+    printer.print(job).then((job)=>{
+        job.status="Done";
+        updateJob(io,job);
+        popQueue(io);
+    })
 }
 
 /**
