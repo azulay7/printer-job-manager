@@ -12,7 +12,7 @@ import { JobService } from '../job.service';
   styleUrls: ['./job-list.component.css']
 })
 export class JobListComponent implements OnInit {
-  jobs:any[] = [];
+  jobs: any[] = [];
   job:any = {};
   jobToEdit:any = {};
   jobToDelete:any = {};
@@ -60,21 +60,13 @@ export class JobListComponent implements OnInit {
     this.jobService.createJob(job,this.socket);
   }
 
-  showEditJob(job:any):void{
+  JobUp(job:any):void{
     this.jobToEdit = job;
-    this.apiMessage = "";
   }
 
-  EditJob(job:any):void{
-    if(!job){ return; }
-    job.id = this.jobToEdit._id;
-    this.jobService.updateJob(job,this.socket);
+  JobDown(job:any):void{
+    this.jobToEdit = job;
   }
-
- showDeleteJob(job:any):void{
-   this.jobToDelete = job;
-   this.apiMessage = "";
- }
 
  DeleteJob(job:any):void{
    if(!job){ return; }

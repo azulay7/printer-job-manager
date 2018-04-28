@@ -38,7 +38,7 @@ export const popQueue=(io)=>{
         if(err){
             return res.json({'success':false,'message':'Some Error'});
         }
-        if(!jobs.length){ //don't popup if their is printing job
+        if(!jobs.length){ //don't popup if there is printing job
 
             Job.find({status:JobStatusEnum.QUEUED}).exec((err,jobs) => {
                 if(err){
@@ -59,7 +59,13 @@ export const popQueue=(io)=>{
 
 }
 
+/**
+ * print job and popup queued at the end
+ * @param io
+ * @param job
+ */
 const printJob=(io,job)=>{
+    let start=new Date();
     printer.print(job).then((job)=>{
         job.status=JobStatusEnum.DONE;
         updateJob(io,job);
@@ -105,6 +111,7 @@ export const addJob = (io,T) => {
 
 /**
  * update job
+ * I use it the most to change the state and duration
  * @param io -socket.io
  * @param T- data model
  */
@@ -143,19 +150,33 @@ export const getJob = (req,res) => {
 
 /**
  * delete job from the queue
+ * check first if job isn't in Printing status
  * @param io -socket.io
  * @param T- data model
  */
 export const deleteJob = (io,T) => {
   let result;
-  Job.findByIdAndRemove(T._id, (err,job) => {
+  Job.findById(T._id, (err,job) => {
     if(err){
-    result = {'success':false,'message':'Some Error','error':err};
-    console.log(result);
+        result = {'success':false,'message':'Some Error','error':err};
+        console.log(result);
+    }
+    else if(job.status==JobStatusEnum.PRINTING){
+        result = {'success':false,'message':'Cannot delete printing job'};
+        console.log(result);
     }
     else {
-      result = {'success':true,'message':'Job deleted successfully', job};
-      io.emit('JobDeleted', result);
+      Job.findByIdAndRemove(T._id,(err,job)=>{
+          if(err){
+              result = {'success':false,'message':'Some Error','error':err};
+              console.log(result);
+          }
+          else {
+              result = {'success': true, 'message': 'Job deleted successfully', job};
+              io.emit('JobDeleted', result);
+          }
+      } )
+
     }
   })
 }
