@@ -46,9 +46,17 @@ export const popQueue=(io)=>{
                 if(jobs.length){
                     let job =jobs[0];
                     job.status=JobStatusEnum.PRINTING;
-                    updateJob(io,job);
-                    printJob(io,job);
+                    Job.findOneAndUpdate({ _id:job.id }, job, { new:true }, (err,job) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            let result = {'success':true,'message':'Job Update Queued to Printing status Successfully',job};
+                            io.emit('JobUpdated', result);
+                            printJob(io, job);
 
+                        }
+                    });
                 }
             })
 
@@ -70,8 +78,16 @@ const printJob=(io,job)=>{
         job.status=JobStatusEnum.DONE;
         job.endTime=new Date();
         job.duration=Date.now() - job.startTime.getTime();
-        updateJob(io,job);
-        popQueue(io);
+        Job.findOneAndUpdate({ _id:job.id }, job, { new:true }, (err,job) => {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                let result = {'success':true,'message':'Job Updated state from Printing to Done Successfully',job};
+                io.emit('JobUpdated', result);
+                popQueue(io);
+            }
+        });
     })
 }
 
