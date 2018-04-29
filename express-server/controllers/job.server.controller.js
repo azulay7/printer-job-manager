@@ -6,8 +6,7 @@ import mongoose from 'mongoose';
 import Job from '../models/job.server.model';
 import printer from '../devices/printer'
 
-const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done",CANCEL:"Cancel"}
-var curPrinterWork=null;
+const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done",CANCELED:"Canceled"}
 /**
  * wakeup printer after crash (node.js crash)
  * get first printing status job and the pop recursively the queue
@@ -157,11 +156,11 @@ export const cancelJob = (io,T)  => {
               return res.json({'success':false,'message':'Some Error'});
           }
           else {
-              job.status = JobStatusEnum.CANCEL;
-              Job.update(job,(err,job) => {
+              job.status = JobStatusEnum.CANCELED;
+              job.save(job,(err,job) => {
                   result = {'success':true,'message':'Cancel Job',job};
                   io.emit('JobUpdated', result);
-                  printerWakeup(io);
+                  popQueue(io);
               });
           }
 

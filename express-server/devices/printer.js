@@ -8,7 +8,7 @@ const subscription = new Rx.Subscription();
 const printer= {
     print : (job) => {
         return new Promise((resolve) => {
-            const id = setTimeout(resolve, 15000, job);
+            const id = setTimeout(resolve, 5000, job);
             subscription.add(() => clearTimeout(id));
         });
     },
