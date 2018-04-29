@@ -7,9 +7,11 @@ import Job from '../models/job.server.model';
 import printer from '../devices/printer'
 
 const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done",CANCELED:"Canceled"}
+
+var subscribtion=null;
 /**
  * wakeup printer after crash (node.js crash)
- * get first printing status job and the pop recursively the queue
+ * get first printing status job and then pop recursively the queue
  */
 export const printerWakeup=(io)=>{
     Job.find({status:JobStatusEnum.PRINTING}).exec((err,jobs) => {
@@ -18,10 +20,9 @@ export const printerWakeup=(io)=>{
         }
         if(jobs.length){
             let job=jobs[0];
-            updateJob(io,job);
             printJob(io,job);
         }
-        else
+        else //there is no printing Job that have been crushed
         {
             popQueue(io);
         }
@@ -45,18 +46,7 @@ export const popQueue=(io)=>{
                 }
                 if(jobs.length){
                     let job =jobs[0];
-                    job.status=JobStatusEnum.PRINTING;
-                    Job.findOneAndUpdate({ _id:job.id }, job, { new:true }, (err,job) => {
-                        if (err) {
-                            console.log(err);
-                        }
-                        else {
-                            let result = {'success':true,'message':'Job Update Queued to Printing status Successfully',job};
-                            io.emit('JobUpdated', result);
-                            printJob(io, job);
-
-                        }
-                    });
+                    printJob(io,job)
                 }
             })
 
@@ -72,23 +62,33 @@ export const popQueue=(io)=>{
  * @param job
  */
 const printJob=(io,job)=>{
+    job.status=JobStatusEnum.PRINTING;
     job.startTime=new Date();
-    updateJob(io,job);
-    printer.print(job).then((job)=>{
-        job.status=JobStatusEnum.DONE;
-        job.endTime=new Date();
-        job.duration=Date.now() - job.startTime.getTime();
-        Job.findOneAndUpdate({ _id:job.id }, job, { new:true }, (err,job) => {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                let result = {'success':true,'message':'Job Updated state from Printing to Done Successfully',job};
-                io.emit('JobUpdated', result);
-                popQueue(io);
-            }
-        });
-    })
+    Job.findOneAndUpdate({ _id:job.id }, job, { new:true }, (err,job) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            let result = {'success':true,'message':'Job Update Queued to Printing status Successfully',job};
+            io.emit('JobUpdated', result);
+            subscribtion=printer.print(job).subscribe((job)=>{
+                job.status=JobStatusEnum.DONE;
+                job.endTime=new Date();
+                job.duration=Date.now() - job.startTime.getTime();
+                Job.findOneAndUpdate({ _id:job.id }, job, { new:true }, (err,job) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        let result = {'success':true,'message':'Job Updated state from Printing to Done Successfully',job};
+                        io.emit('JobUpdated', result);
+                        popQueue(io);
+                    }
+                });
+            })
+
+        }
+    });
 }
 
 /**
@@ -166,7 +166,7 @@ export const cancelJob = (io,T)  => {
     let result;
 
     if(T.status==JobStatusEnum.PRINTING){
-        printer.cancel();
+        printer.cancel(subscribtion);
         Job.findById(T._id, (err,job) => {
           if(err){
               return res.json({'success':false,'message':'Some Error'});

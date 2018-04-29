@@ -1,18 +1,19 @@
 /**
  * mock for printer
  */
-import * as Rx from "rxjs";
+import * as Rx from 'rxjs';
 
-const subscription = new Rx.Subscription();
+// const subscription = new Subscription();
 
 const printer= {
     print : (job) => {
-        return new Promise((resolve) => {
-            const id = setTimeout(resolve, 5000, job);
-            subscription.add(() => clearTimeout(id));
-        });
+        return new Rx.Observable(observer => {
+            setInterval(() => {
+                observer.next(job);
+            }, 5000)
+        })
     },
-    cancel:()=>{subscription.unsubscribe();}
+    cancel:(subscription)=>{subscription.unsubscribe()}
 }
 
 export default printer;
