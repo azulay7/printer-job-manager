@@ -3,7 +3,7 @@
   <form (ngSubmit)="AddJob(job);jobForm.reset()" #jobForm="ngForm">
   <div class="form-group">
     <label for="jobText">Name:</label>
-    <input type="text" [(ngModel)]="job.jobText" #jobtext="ngModel" class="form-control" name="jobText" id="jobText" required />
+    <input type="text" [(ngModel)]="job.jobText" #jobtext="ngModel" class="form-control" name="jobText" id="jobText" required autocomplete="off" />
     <div [hidden]="jobtext.valid || jobtext.pristine"
          class="alert alert-danger">
       Name is required
@@ -32,8 +32,8 @@
      <td>{{job.jobText}}</td>
        <td>{{job.status }}</td>
        <td>{{job.createdAt | date:'dd/MM/yyyy HH:mm'}} </td>
-       <td><p data-placement="top" data-toggle="tooltip" title="Up"><button class="btn btn-xs" (click) = "JobUp(job)" data-title="Up" data-toggle="modal" data-target="#up" [disabled]="job.status=='Printing' || i==0" ><span class="	glyphicon glyphicon-arrow-up"></span></button></p></td>
-       <td><p data-placement="top" data-toggle="tooltip" title="Down"><button class="btn btn-xs" (click) = "JobDown(job)" data-title="Down" data-toggle="modal" data-target="#down" [disabled]="job.status=='Printing' || i==jobs.length-1" ><span class="	glyphicon glyphicon-arrow-down"></span></button></p></td>
+       <td><p data-placement="top" data-toggle="tooltip" title="Up"><button class="btn btn-xs" (click) = "JobUp(job)" data-title="Up" data-toggle="modal" data-target="#up" [disabled]="JobUpDisabled(job,i)" ><span class="	glyphicon glyphicon-arrow-up"></span></button></p></td>
+       <td><p data-placement="top" data-toggle="tooltip" title="Down"><button class="btn btn-xs" (click) = "JobDown(job)" data-title="Down" data-toggle="modal" data-target="#down" [disabled]="JobDownDisabled(job,i)" ><span class="	glyphicon glyphicon-arrow-down"></span></button></p></td>
        <td><p data-placement="top" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" (click)= "DeleteJob(job)" data-title="Delete" data-toggle="modal" data-target="#delete" [disabled]="job.status=='Printing'"><span class="glyphicon glyphicon-trash"></span></button></p></td>
      </tr>
 

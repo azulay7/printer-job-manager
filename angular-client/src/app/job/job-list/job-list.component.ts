@@ -14,10 +14,6 @@ import { JobService } from '../job.service';
 export class JobListComponent implements OnInit {
   jobs: any[] = [];
   job:any = {};
-  jobToEdit:any = {};
-  jobToDelete:any = {};
-  fetchingData:boolean = false;
-  apiMessage:string;
 
   private url = 'http://localhost:3001';
   private socket;
@@ -43,14 +39,12 @@ export class JobListComponent implements OnInit {
           }
           return { ...t, ...data.job };
         })
-        this.apiMessage = data.message;
         this.jobs = updatedJobs;
     });
     //Receive Deleted Job and remove it from liste
     this.socket.on('JobDeleted', (data) => {
       console.log('JobDeleted: '+JSON.stringify(data));
       const filteredJobs = this.jobs.filter(t => t._id !== data.job._id);
-      this.apiMessage = data.message;
       this.jobs = filteredJobs;
     });
   }
@@ -60,17 +54,30 @@ export class JobListComponent implements OnInit {
     this.jobService.createJob(job,this.socket);
   }
 
+  JobUpDisabled(job,index)
+  {
+    let queuedJob:any=[];
+    queuedJob=this.jobs.filter(job=>job.status=="Queued");
+    return (queuedJob.length < 2 || job.status!='Queued' || index==0 )
+
+  }
+  JobDownDisabled(job,index)
+  {
+    let queuedJob:any=[];
+    queuedJob=this.jobs.filter(job=>job.status=="Queued");
+    return (queuedJob.length < 2 || job.status!='Queued' || index==this.jobs.length-1 )
+
+  }
+
   JobUp(job:any):void{
-    this.jobToEdit = job;
   }
 
   JobDown(job:any):void{
-    this.jobToEdit = job;
   }
 
- DeleteJob(job:any):void{
+  DeleteJob(job:any):void{
    if(!job){ return; }
    this.jobService.deleteJob(job,this.socket);
- }
+  }
 
 }
