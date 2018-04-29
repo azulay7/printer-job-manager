@@ -8,11 +8,13 @@ import { AppComponent } from './app.component';
 
 import { JobService } from './job/job.service';
 import { JobListComponent } from './job/job-list/job-list.component';
+import { Mili2secPipe } from './pipes/mili2sec.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
-    JobListComponent
+    JobListComponent,
+    Mili2secPipe
   ],
   imports: [
     BrowserModule,

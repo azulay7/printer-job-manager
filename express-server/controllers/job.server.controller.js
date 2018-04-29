@@ -65,9 +65,11 @@ export const popQueue=(io)=>{
  * @param job
  */
 const printJob=(io,job)=>{
-    let start=new Date();
+    job.startTime=new Date();
     printer.print(job).then((job)=>{
         job.status=JobStatusEnum.DONE;
+        job.endTime=new Date();
+        job.duration=Date.now() - job.startTime.getTime();
         updateJob(io,job);
         popQueue(io);
     })

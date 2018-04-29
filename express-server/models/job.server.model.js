@@ -7,6 +7,8 @@ var Schema = mongoose.Schema({
   },
   jobText: String,
   status : String,
+  startTime: Date,
+  endTime: Date,
   duration: Number
 });
 
