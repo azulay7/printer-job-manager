@@ -86,6 +86,16 @@ export const getJobs = (req,res) => {
   });
 }
 
+export const jobSwapIndex = (req,res) => {
+    console.log('swap')
+    Job.findById(req.params.id).exec((err,jobs) => {
+        if(err){
+            return res.json({'success':false,'message':'Some Error'});
+        }
+
+        return res.json({'success':true,'message':'Jobs fetched successfully',jobs});
+    });
+}
 /**
  * add printer job
  * @param io -socket.io

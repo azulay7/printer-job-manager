@@ -32,8 +32,8 @@
      <td>{{job.jobText}}</td>
        <td>{{job.status }}</td>
        <td>{{job.createdAt | date:'dd/MM/yyyy HH:mm'}} </td>
-       <td><p data-placement="top" data-toggle="tooltip" title="Up"><button class="btn btn-xs" (click) = "JobUp(job)" data-title="Up" data-toggle="modal" data-target="#up" [disabled]="JobUpDisabled(job,i)" ><span class="	glyphicon glyphicon-arrow-up"></span></button></p></td>
-       <td><p data-placement="top" data-toggle="tooltip" title="Down"><button class="btn btn-xs" (click) = "JobDown(job)" data-title="Down" data-toggle="modal" data-target="#down" [disabled]="JobDownDisabled(job,i)" ><span class="	glyphicon glyphicon-arrow-down"></span></button></p></td>
+       <td><p data-placement="top" data-toggle="tooltip" title="Up"><button class="btn btn-xs" (click) = "JobUp(i)" data-title="Up" data-toggle="modal" data-target="#up" [disabled]="JobUpDisabled(job,i)" ><span class="	glyphicon glyphicon-arrow-up"></span></button></p></td>
+       <td><p data-placement="top" data-toggle="tooltip" title="Down"><button class="btn btn-xs" (click) = "JobDown(i)" data-title="Down" data-toggle="modal" data-target="#down" [disabled]="JobDownDisabled(job,i)" ><span class="	glyphicon glyphicon-arrow-down"></span></button></p></td>
        <td><p data-placement="top" data-toggle="tooltip" title="Delete"><button class="btn btn-danger btn-xs" (click)= "DeleteJob(job)" data-title="Delete" data-toggle="modal" data-target="#delete" [disabled]="job.status=='Printing'"><span class="glyphicon glyphicon-trash"></span></button></p></td>
      </tr>
 

@@ -10,6 +10,9 @@ const router = express.Router();
 router.route('/')
      .get(jobController.getJobs);
 
+router.route('/jobSwapIndex')
+    .post(jobController.jobSwapIndex);
+
 router.route('/:id')
       .get(jobController.getJob);
 

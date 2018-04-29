@@ -18,23 +18,28 @@ export class JobService {
                  .catch(this.handleError)
   }
 
-  getJob(id:string): Promise<any>{
-    return this.http.get(this.apiUrl + id)
-                    .toPromise()
-                    .then(this.handleData)
-                    .catch(this.handleError)
-  }
-
   createJob(job:any,socket:any): void{
     socket.emit('addJob', job);
   }
 
+  /**
+   * for cancel and Up/Down Job
+   * @param job
+   * @param socket
+   */
   updateJob(job:any,socket:any):void{
     socket.emit('updateJob', job);
   }
 
   deleteJob(job:any,socket:any):void{
     socket.emit('deleteJob', job);
+  }
+
+  jobSwapIndex(index1:number,index2:number): Promise<any>{
+    return this.http.post(this.apiUrl+'jobSwapIndex',{index1,index2})
+      .toPromise()
+      .then(this.handleData)
+      .catch(this.handleError)
   }
 
   private handleData(res: any) {

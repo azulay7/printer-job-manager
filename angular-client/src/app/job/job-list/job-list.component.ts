@@ -69,10 +69,14 @@ export class JobListComponent implements OnInit {
 
   }
 
-  JobUp(job:any):void{
+  JobUp(index:number):void{
+    this.jobService.jobSwapIndex(index,index-1).
+     then(jobs=>this.jobs=jobs);
   }
 
-  JobDown(job:any):void{
+  JobDown(index:number):void{
+    this.jobService.jobSwapIndex(index,index+1).
+    then(jobs=>this.jobs=jobs);
   }
 
   DeleteJob(job:any):void{
