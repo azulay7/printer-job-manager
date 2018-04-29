@@ -84,4 +84,9 @@ export class JobListComponent implements OnInit {
    this.jobService.deleteJob(job,this.socket);
   }
 
+  CancelJob(job:any):void{
+    if(!job){ return; }
+    this.jobService.cancelJob(job,this.socket);
+  }
+
 }

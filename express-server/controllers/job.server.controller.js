@@ -6,8 +6,8 @@ import mongoose from 'mongoose';
 import Job from '../models/job.server.model';
 import printer from '../devices/printer'
 
-const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done"}
-
+const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done",CANCEL:"Cancel"}
+var curPrinterWork=null;
 /**
  * wakeup printer after crash (node.js crash)
  * get first printing status job and the pop recursively the queue
@@ -15,7 +15,7 @@ const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done"}
 export const printerWakeup=(io)=>{
     Job.find({status:JobStatusEnum.PRINTING}).exec((err,jobs) => {
         if(err){
-            return res.json({'success':false,'message':'Some Error'});
+            console.log(JSON.stringify({'success':false,'message':'Some Error',error}));
         }
         if(jobs.length){
             let job=jobs[0];
@@ -143,22 +143,35 @@ export const updateJob = (io,T) => {
 }
 
 /**
- * add job to the queue
+ * cancel job
  * @param req
  * @param res
  */
-export const getJob = (req,res) => {
-  Job.find({_id:req.params.id}).exec((err,job) => {
-    if(err){
-    return res.json({'success':false,'message':'Some Error'});
-    }
-    if(job.length){
-      return res.json({'success':true,'message':'Job fetched by id successfully',job});
+export const cancelJob = (io,T)  => {
+    let result;
+
+    if(T.status==JobStatusEnum.PRINTING){
+        printer.cancel();
+        Job.findById(T._id, (err,job) => {
+          if(err){
+              return res.json({'success':false,'message':'Some Error'});
+          }
+          else {
+              job.status = JobStatusEnum.CANCEL;
+              Job.update(job,(err,job) => {
+                  result = {'success':true,'message':'Cancel Job',job};
+                  io.emit('JobUpdated', result);
+                  printerWakeup(io);
+              });
+          }
+
+        })
     }
     else{
-      return res.json({'success':false,'message':'Job with the given id not found'});
+        result= res.json({'success':false,'message':'Job with the given id not found'});
     }
-  })
+
+
 }
 
 /**

@@ -45,6 +45,12 @@ io.on('connection', (socket) => {
     console.log('socketData: '+JSON.stringify(Job));
     jobController.deleteJob(io,Job);
   });
+
+  // Receiving Job to Cancel
+  socket.on('cancelJob', (Job) => {
+      console.log('socketData: '+JSON.stringify(Job));
+      jobController.cancelJob(io,Job);
+  });
 })
 
 //printer bootstrap

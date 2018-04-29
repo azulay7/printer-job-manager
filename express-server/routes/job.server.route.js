@@ -13,8 +13,8 @@ router.route('/')
 router.route('/jobSwapIndex')
     .post(jobController.jobSwapIndex);
 
-router.route('/:id')
-      .get(jobController.getJob);
+router.route('cancelJob/:id')
+      .get(jobController.cancelJob);
 
 
 export default router;

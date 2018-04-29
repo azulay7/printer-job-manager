@@ -35,6 +35,10 @@ export class JobService {
     socket.emit('deleteJob', job);
   }
 
+  cancelJob(job:any,socket:any):void{
+    socket.emit('cancelJob', job);
+  }
+
   jobSwapIndex(index1:number,index2:number): Promise<any>{
     return this.http.post(this.apiUrl+'jobSwapIndex',{index1,index2})
       .toPromise()
