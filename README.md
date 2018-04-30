@@ -10,9 +10,10 @@ To build and run this app locally you will need a few things:
 	   make sure to add c:\data\db folders
 	   run C:\Program Files\MongoDB\Server\3.6\bin\mongod.exe
 	   
-- after clone/download do npm install for both angular-client and express-server projects
-- Devlopment:
-	angular-client/ ng serve
-	express-server/ npm start
+- After clone\download please do:__
+	npm install for both angular-client and express-server projects
+- Devlopment:__
+	angular-client: ng serve__
+	express-server/ npm start__
 	
 	
