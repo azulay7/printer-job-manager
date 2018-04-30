@@ -13,7 +13,7 @@ import { JobService } from '../job.service';
 })
 export class JobListComponent implements OnInit {
   jobs: any[] = [];
-  job:any = {};
+  job: any = {};
 
   private url = 'http://localhost:3001';
   private socket;
@@ -49,24 +49,40 @@ export class JobListComponent implements OnInit {
     });
   }
 
+  /**
+   * add job to list
+   * @param job
+   * @constructor
+   */
   AddJob(job:any):void{
     if(!job){ return; }
     this.jobService.createJob(job,this.socket);
   }
 
+  /**
+   * disable up button
+   * if there is no queued job above id
+   */
   JobUpDisabled(job,index)
   {
     let queuedJob=this.jobs.filter(job=>job.status=="Queued");
     return (queuedJob.length < 2 || job.status!='Queued' || index==0 || (index >0 && this.jobs[index-1].status!="Queued"))
 
   }
+
+  /**
+   * disable down key
+   * if there is no queued job down
+   */
   JobDownDisabled(job,index)
   {
     let queuedJob=this.jobs.filter(job=>job.status=="Queued");
     return (queuedJob.length < 2 || job.status!='Queued' || index==this.jobs.length-1 )
-
   }
 
+  /**
+   * up job in queue
+   */
   JobUp(index:number):void{
     this.jobService.jobSwapIndex(this.jobs[index],this.jobs[index-1]).
      then(
@@ -74,6 +90,9 @@ export class JobListComponent implements OnInit {
     );
   }
 
+  /**
+   * down job in queue
+   */
   JobDown(index:number):void{
     this.jobService.jobSwapIndex(this.jobs[index],this.jobs[index+1]).
     then(
@@ -81,11 +100,17 @@ export class JobListComponent implements OnInit {
     );
   }
 
+  /**
+   * delete job in state!=printing
+   */
   DeleteJob(job:any):void{
    if(!job){ return; }
    this.jobService.deleteJob(job,this.socket);
   }
 
+  /**
+   * cancel printing job
+   */
   CancelJob(job:any):void{
     if(!job){ return; }
     this.jobService.cancelJob(job,this.socket);

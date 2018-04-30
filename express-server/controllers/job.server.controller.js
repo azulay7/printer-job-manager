@@ -8,7 +8,8 @@ import printer from '../devices/printer'
 
 const JobStatusEnum={PRINTING:"Printing", QUEUED:"Queued",DONE:"Done",CANCELED:"Canceled"}
 
-var subscribtion=null;
+var printerCurWorkSubscribtion=null; //used to cancel the job by request
+
 /**
  * wakeup printer after crash (node.js crash)
  * get first printing status job and then pop recursively the queue
@@ -71,7 +72,7 @@ const printJob=(io,job)=>{
         else {
             let result = {'success':true,'message':'Job Update Queued to Printing status Successfully',job};
             io.emit('JobUpdated', result);
-            subscribtion=printer.print(job).subscribe((job)=>{
+            printerCurWorkSubscribtion=printer.print(job).subscribe((job)=>{
                 job.status=JobStatusEnum.DONE;
                 job.endTime=new Date();
                 job.duration=Date.now() - job.startTime.getTime();
@@ -104,6 +105,11 @@ export const getJobs = (req,res) => {
   });
 }
 
+/**
+ * swap between to docs
+ * @param req
+ * @param res
+ */
 export const jobSwapIndex = (req,res) => {
     console.log('swap')
     let job1 = req.body.job1;
@@ -132,104 +138,7 @@ export const jobSwapIndex = (req,res) => {
 
         }
     });
-
-    /*
-    Job.find().exec((err,jobs) => {
-        if(err){
-            return res.json({'success':false,'message':'Some Error'});
-        }
-
-        if(jobs)
-        {
-            // let temp=jobs[req.body.index1];
-            // let job1=Object.assign(jobs[req.body.index1],jobs[req.body.index2])
-            // let job2=Object.assign(jobs[req.body.index2],temp);
-
-            let job1=req.body.job1;
-            let job2 = req.body.job2;
-
-            Job.findById(job1._id, function (err, m_job1) {
-                if (err) return;
-                if(m_job1) {
-                    Job.findById(job2._id, function (err, m_job2) {
-                        if (err) return;
-
-                        let temp = _.cloneDeep(m_job1);
-                        // m_job1.set(m_job2);
-                        // m_job2.set(temp);
-
-                        Job.update({_id:job2._id}, job1, (err, job) => {
-                            if (err) {
-                                return res.json({'success': false, 'message': 'Some Error'});
-                            }
-                            if (job) {
-                                Job.update({_id:job1._id}, job2, (err, job) => {
-                                    if (err) {
-                                        return res.json({'success': false, 'message': 'Some Error'});
-                                    }
-                                    if(job)
-                                    {
-                                        Job.find().exec((err, jobs) => {
-                                            if (err) {
-                                                return res.json({'success': false, 'message': 'Some Error'});
-                                            }
-
-                                            return res.json({'success': true, 'message': 'Jobs Swap index successfully', jobs});
-                                        });
-                                    }
-                                });
-
-                            }
-                        });
-                    });
-                }
-
-            });
-        }})
-        */
 };
-
-
-//         m_job1.save((err,job)=>{
-//             if (err) return;
-//
-//             m_job2.save((err,job)=>{
-//                 if (err) return;
-//
-//                 Job.find().exec((err,jobs) => {
-//                     if(err){
-//                         return res.json({'success':false,'message':'Some Error'});
-//                     }
-//
-//                     if(jobs)
-//                     {
-//                         if(err){
-//                             return res.json({'success':false,'message':'Some Error'});
-//                         }
-//
-//                         return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
-//
-//                     }
-//             })
-//         })
-//
-//         // let jobs2=[m_job1,m_job2];
-//         // Job.update(jobs2,{},(err,jobs) => {
-//         //     if(err){
-//         //         return res.json({'success':false,'message':'Some Error'});
-//         //     }
-//         //     if(jobs){
-//         //         Job.find().exec((err,jobs) => {
-//         //             if(err){
-//         //                 return res.json({'success':false,'message':'Some Error'});
-//         //             }
-//         //
-//         //             return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
-//         //         });
-//         //     }
-//         // });
-//     // });
-// });
 
 
 /**
@@ -284,7 +193,7 @@ export const cancelJob = (io,T)  => {
     let result;
 
     if(T.status==JobStatusEnum.PRINTING){
-        printer.cancel(subscribtion);
+        printer.cancel(printerCurWorkSubscribtion);
         Job.findById(T._id, (err,job) => {
           if(err){
               return res.json({'success':false,'message':'Some Error'});
