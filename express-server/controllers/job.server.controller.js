@@ -117,16 +117,20 @@ export const jobSwapIndex = (req,res) => {
             jobs[req.body.index1]=jobs[req.body.index2];
             jobs[req.body.index2]=temp;
 
-            return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
+            Job.update(null,jobs, {collation:{numericOrdering:true}, multi: true }).exec((err,jobs,j) => {
+                if(err){
+                    return res.json({'success':false,'message':'Some Error'});
+                }
+                if(jobs){
+                    Job.find().exec((err,jobs) => {
+                        if(err){
+                            return res.json({'success':false,'message':'Some Error'});
+                        }
 
-            // Job.collection.update(jobs).exec((err,jobs) => {
-            //     if(err){
-            //         return res.json({'success':false,'message':'Some Error'});
-            //     }
-            //     if(jobs){
-            //         return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
-            //     }
-            // });
+                        return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
+                    });
+                }
+            });
         }
 
     });
