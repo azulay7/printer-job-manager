@@ -2,9 +2,9 @@
   <h4>Add New Job</h4>
   <form (ngSubmit)="AddJob(job);jobForm.reset()" #jobForm="ngForm">
   <div class="form-group">
-    <label for="jobText">Name:</label>
-    <input type="text" [(ngModel)]="job.jobText" #jobtext="ngModel" class="form-control" name="jobText" id="jobText" required autocomplete="off" />
-    <div [hidden]="jobtext.valid || jobtext.pristine"
+    <label for="name">Name:</label>
+    <input type="text" [(ngModel)]="job.name" #name="ngModel" class="form-control" name="name" id="name" required autocomplete="off" />
+    <div [hidden]="name.valid || name.pristine"
          class="alert alert-danger">
       Name is required
     </div>
@@ -33,7 +33,7 @@
      <tbody>
 
      <tr *ngFor="let job of jobs; let i = index">
-       <td>{{job.jobText}}</td>
+       <td>{{job.name}}</td>
        <td [ngClass]="{'text-primary':job.status=='Printing',
                     'text-success':job.status=='Done',
                     'text-danger':job.status=='Canceled',

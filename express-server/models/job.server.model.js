@@ -5,7 +5,7 @@ var Schema = mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  jobText: String,
+  name: String,
   status : String,
   startTime: Date,
   endTime: Date,

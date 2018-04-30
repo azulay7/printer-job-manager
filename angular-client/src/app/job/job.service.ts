@@ -39,8 +39,8 @@ export class JobService {
     socket.emit('cancelJob', job);
   }
 
-  jobSwapIndex(index1:number,index2:number): Promise<any>{
-    return this.http.post(this.apiUrl+'jobSwapIndex',{index1,index2})
+  jobSwapIndex(job1:number,job2:number): Promise<any>{
+    return this.http.post(this.apiUrl+'jobSwapIndex',{job1,job2})
       .toPromise()
       .then(this.handleData)
       .catch(this.handleError)

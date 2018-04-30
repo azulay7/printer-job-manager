@@ -1,7 +1,8 @@
 # printer-jobs-management
-# Pre-reqs
 
 Printer Jobs App using Angular4, Expressjs, Socket.io and MongoDB
+
+# Pre-reqs
 To build and run this app locally you will need a few things:
 - Install [Node.js](https://nodejs.org/en/)
 - Install [MongoDB](https://docs.mongodb.com/manual/installation/) 3.6
@@ -13,3 +14,5 @@ To build and run this app locally you will need a few things:
 - Devlopment:
 	angular-client/ ng serve
 	express-server/ npm start
+	
+	

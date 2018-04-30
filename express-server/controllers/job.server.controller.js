@@ -1,6 +1,6 @@
 // ./express-server/controllers/job.server.controller.js
 import mongoose from 'mongoose';
-
+import * as _ from 'lodash';
 
 //import models
 import Job from '../models/job.server.model';
@@ -106,6 +106,34 @@ export const getJobs = (req,res) => {
 
 export const jobSwapIndex = (req,res) => {
     console.log('swap')
+    let job1 = req.body.job1;
+    let job2 = req.body.job2;
+
+    Job.update({_id:job2._id}, { createdAt: job1.createdAt, name: job1.name,status:job1.status}, (err, job) => {
+        if (err) {
+            return res.json({'success': false, 'message': 'Some Error'});
+        }
+        if (job) {
+            Job.update({_id:job1._id}, { createdAt: job2.createdAt, name: job2.name,status:job2.status}, (err, job) => {
+                if (err) {
+                    return res.json({'success': false, 'message': 'Some Error'});
+                }
+                if(job)
+                {
+                    Job.find().exec((err, jobs) => {
+                        if (err) {
+                            return res.json({'success': false, 'message': 'Some Error'});
+                        }
+
+                        return res.json({'success': true, 'message': 'Jobs Swap index successfully', jobs});
+                    });
+                }
+            });
+
+        }
+    });
+
+    /*
     Job.find().exec((err,jobs) => {
         if(err){
             return res.json({'success':false,'message':'Some Error'});
@@ -113,28 +141,97 @@ export const jobSwapIndex = (req,res) => {
 
         if(jobs)
         {
-            let temp=jobs[req.body.index1];
-            jobs[req.body.index1]=jobs[req.body.index2];
-            jobs[req.body.index2]=temp;
+            // let temp=jobs[req.body.index1];
+            // let job1=Object.assign(jobs[req.body.index1],jobs[req.body.index2])
+            // let job2=Object.assign(jobs[req.body.index2],temp);
 
-            Job.update(null,jobs, {collation:{numericOrdering:true}, multi: true }).exec((err,jobs,j) => {
-                if(err){
-                    return res.json({'success':false,'message':'Some Error'});
-                }
-                if(jobs){
-                    Job.find().exec((err,jobs) => {
-                        if(err){
-                            return res.json({'success':false,'message':'Some Error'});
-                        }
+            let job1=req.body.job1;
+            let job2 = req.body.job2;
 
-                        return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
+            Job.findById(job1._id, function (err, m_job1) {
+                if (err) return;
+                if(m_job1) {
+                    Job.findById(job2._id, function (err, m_job2) {
+                        if (err) return;
+
+                        let temp = _.cloneDeep(m_job1);
+                        // m_job1.set(m_job2);
+                        // m_job2.set(temp);
+
+                        Job.update({_id:job2._id}, job1, (err, job) => {
+                            if (err) {
+                                return res.json({'success': false, 'message': 'Some Error'});
+                            }
+                            if (job) {
+                                Job.update({_id:job1._id}, job2, (err, job) => {
+                                    if (err) {
+                                        return res.json({'success': false, 'message': 'Some Error'});
+                                    }
+                                    if(job)
+                                    {
+                                        Job.find().exec((err, jobs) => {
+                                            if (err) {
+                                                return res.json({'success': false, 'message': 'Some Error'});
+                                            }
+
+                                            return res.json({'success': true, 'message': 'Jobs Swap index successfully', jobs});
+                                        });
+                                    }
+                                });
+
+                            }
+                        });
                     });
                 }
-            });
-        }
 
-    });
-}
+            });
+        }})
+        */
+};
+
+
+//         m_job1.save((err,job)=>{
+//             if (err) return;
+//
+//             m_job2.save((err,job)=>{
+//                 if (err) return;
+//
+//                 Job.find().exec((err,jobs) => {
+//                     if(err){
+//                         return res.json({'success':false,'message':'Some Error'});
+//                     }
+//
+//                     if(jobs)
+//                     {
+//                         if(err){
+//                             return res.json({'success':false,'message':'Some Error'});
+//                         }
+//
+//                         return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
+//
+//                     }
+//             })
+//         })
+//
+//         // let jobs2=[m_job1,m_job2];
+//         // Job.update(jobs2,{},(err,jobs) => {
+//         //     if(err){
+//         //         return res.json({'success':false,'message':'Some Error'});
+//         //     }
+//         //     if(jobs){
+//         //         Job.find().exec((err,jobs) => {
+//         //             if(err){
+//         //                 return res.json({'success':false,'message':'Some Error'});
+//         //             }
+//         //
+//         //             return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
+//         //         });
+//         //     }
+//         // });
+//     // });
+// });
+
+
 /**
  * add printer job
  * @param io -socket.io

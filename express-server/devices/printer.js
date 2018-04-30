@@ -10,7 +10,7 @@ const printer= {
         return new Rx.Observable(observer => {
             setTimeout(() => {
                 observer.next(job);
-            }, Math.floor(Math.random() * 10000) +1000 )
+            }, Math.floor(Math.random() * 10000) +5000 )
         })
     },
     cancel:(subscription)=>{subscription.unsubscribe()}
