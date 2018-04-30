@@ -14,6 +14,6 @@ To build and run this app locally you will need a few things:
 	npm install for both angular-client and express-server projects
 - Devlopment:</br>
 	angular-client: ng serve</br>
-	express-server/ npm start</br>
+	express-server: npm start</br>
 	
 	
