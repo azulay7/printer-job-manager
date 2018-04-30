@@ -106,12 +106,29 @@ export const getJobs = (req,res) => {
 
 export const jobSwapIndex = (req,res) => {
     console.log('swap')
-    Job.findById(req.params.id).exec((err,jobs) => {
+    Job.find().exec((err,jobs) => {
         if(err){
             return res.json({'success':false,'message':'Some Error'});
         }
 
-        return res.json({'success':true,'message':'Jobs fetched successfully',jobs});
+        if(jobs)
+        {
+            let temp=jobs[req.body.index1];
+            jobs[req.body.index1]=jobs[req.body.index2];
+            jobs[req.body.index2]=temp;
+
+            return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
+
+            // Job.collection.update(jobs).exec((err,jobs) => {
+            //     if(err){
+            //         return res.json({'success':false,'message':'Some Error'});
+            //     }
+            //     if(jobs){
+            //         return res.json({'success':true,'message':'Jobs Swap index successfully',jobs});
+            //     }
+            // });
+        }
+
     });
 }
 /**

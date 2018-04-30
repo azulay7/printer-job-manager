@@ -21,8 +21,6 @@ const app = express();
 const server = http.Server(app);
 const io = socket(server);
 
-// express-busboy to parse multipart/form-data
-bb.extend(app);
 
 // socket.io connection
 io.on('connection', (socket) => {
@@ -58,9 +56,15 @@ jobController.printerWakeup(io);
 
 // allow-cors
 app.use(function(req,res,next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+    res.header('Access-Control-Allow-Headers', 'Origin, Content-Type,Content-Type,Accept, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+    // allow preflight
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
 })
 
 // configure app
@@ -69,6 +73,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// express-busboy to parse multipart/form-data
+bb.extend(app);
 
 // set the port
 const port = process.env.PORT || 3001;

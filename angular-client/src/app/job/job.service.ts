@@ -1,6 +1,6 @@
 // ./angular-client/src/app/job/job.service.ts
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
+import {Headers, Http, RequestOptions} from '@angular/http';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -12,7 +12,7 @@ export class JobService {
   constructor(private http: Http){ }
 
   getJobs(): Promise<any>{
-      return this.http.get(this.apiUrl)
+      return this.http.get(this.apiUrl+'getJobs')
                  .toPromise()
                  .then(this.handleData)
                  .catch(this.handleError)

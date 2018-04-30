@@ -7,7 +7,7 @@ import * as jobController from '../controllers/job.server.controller';
 // get an instance of express router
 const router = express.Router();
 
-router.route('/')
+router.route('/getJobs')
      .get(jobController.getJobs);
 
 router.route('/jobSwapIndex')

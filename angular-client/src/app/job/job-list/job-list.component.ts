@@ -56,27 +56,29 @@ export class JobListComponent implements OnInit {
 
   JobUpDisabled(job,index)
   {
-    let queuedJob:any=[];
-    queuedJob=this.jobs.filter(job=>job.status=="Queued");
-    return (queuedJob.length < 2 || job.status!='Queued' || index==0 )
+    let queuedJob=this.jobs.filter(job=>job.status=="Queued");
+    return (queuedJob.length < 2 || job.status!='Queued' || index==0 || (index >0 && this.jobs[index-1].status!="Queued"))
 
   }
   JobDownDisabled(job,index)
   {
-    let queuedJob:any=[];
-    queuedJob=this.jobs.filter(job=>job.status=="Queued");
+    let queuedJob=this.jobs.filter(job=>job.status=="Queued");
     return (queuedJob.length < 2 || job.status!='Queued' || index==this.jobs.length-1 )
 
   }
 
   JobUp(index:number):void{
     this.jobService.jobSwapIndex(index,index-1).
-     then(jobs=>this.jobs=jobs);
+     then(
+       td=>this.jobs=td.jobs
+    );
   }
 
   JobDown(index:number):void{
     this.jobService.jobSwapIndex(index,index+1).
-    then(jobs=>this.jobs=jobs);
+    then(
+      td=>this.jobs=td.jobs
+    );
   }
 
   DeleteJob(job:any):void{
