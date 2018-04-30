@@ -12,7 +12,7 @@ var printerCurWorkSubscribtion=null; //used to cancel the job by request
 
 /**
  * wakeup printer after crash (node.js crash)
- * get first printing status job and then pop recursively the queue
+ * print first printing status job if any, if not pop the queue
  */
 export const printerWakeup=(io)=>{
     Job.find({status:JobStatusEnum.PRINTING}).exec((err,jobs) => {
@@ -73,9 +73,9 @@ const printJob=(io,job)=>{
             let result = {'success':true,'message':'Job Update Queued to Printing status Successfully',job};
             io.emit('JobUpdated', result);
             printerCurWorkSubscribtion=printer.print(job).subscribe((job)=>{
-                job.status=JobStatusEnum.DONE;
-                job.endTime=new Date();
-                job.duration=Date.now() - job.startTime.getTime();
+                job.status = JobStatusEnum.DONE;
+                job.endTime = new Date();
+                job.duration = Date.now() - job.startTime.getTime();
                 Job.findOneAndUpdate({ _id:job.id }, job, { new:true }, (err,job) => {
                     if (err) {
                         console.log(err);
