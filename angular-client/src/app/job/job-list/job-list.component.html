@@ -34,7 +34,10 @@
 
      <tr *ngFor="let job of jobs; let i = index">
        <td>{{job.jobText}}</td>
-       <td>{{job.status }}</td>
+       <td [ngClass]="{'text-primary':job.status=='Printing',
+                    'text-success':job.status=='Done',
+                    'text-danger':job.status=='Canceled',
+                     'text-warning':job.status=='Queued'}">{{job.status }}</td>
        <td>{{job.createdAt | date:'dd/MM/yyyy HH:mm:ss'}} </td>
        <td>{{job.startTime | date:'dd/MM/yyyy HH:mm:ss'}} </td>
        <td>{{job.endTime | date:'dd/MM/yyyy HH:mm:ss'}} </td>

@@ -8,9 +8,9 @@ import * as Rx from 'rxjs';
 const printer= {
     print : (job) => {
         return new Rx.Observable(observer => {
-            setInterval(() => {
+            setTimeout(() => {
                 observer.next(job);
-            }, 5000)
+            }, Math.floor(Math.random() * 10000) +1000 )
         })
     },
     cancel:(subscription)=>{subscription.unsubscribe()}
