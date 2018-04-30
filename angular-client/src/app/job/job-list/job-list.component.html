@@ -51,8 +51,14 @@
   </table>
 
 </div>
-<div *ngIf="jobs.length <= 0" class="NoJobsBox">
-<div align="center" class="alert alert-info" role="alert">
-<strong>No Jobs Available in Database</strong>
+<div *ngIf="!errorMsg && jobs.length <= 0" class="NoJobsBox">
+  <div align="center" class="alert alert-info" role="alert">
+    <strong>No Jobs Available in Database</strong>
+  </div>
 </div>
+<div *ngIf="errorMsg">
+  <div align="center" class="alert alert-danger" role="alert">
+    <strong>No Connection to server!</strong>
+    <div>{{errorMsg}}</div>
+  </div>
 </div>

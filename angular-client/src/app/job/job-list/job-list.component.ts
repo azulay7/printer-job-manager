@@ -14,6 +14,7 @@ import { JobService } from '../job.service';
 export class JobListComponent implements OnInit {
   jobs: any[] = [];
   job: any = {};
+  errorMsg=null;
 
   private url = 'http://localhost:3001';
   private socket;
@@ -23,7 +24,8 @@ export class JobListComponent implements OnInit {
   ngOnInit(): void {
     this.jobService.showAddJobBox = true;
     this.jobService.getJobs()
-                    .then(td => this.jobs = td.jobs );
+                    .then(td => this.jobs = td.jobs )
+                    .catch(msg=>this.errorMsg=msg);
     this.socket = io.connect(this.url);
     // Receive Added Job
     this.socket.on('JobAdded', (data) => {

@@ -1,6 +1,6 @@
 # printer-jobs-management
 
-Printer Jobs App using Angular4, Expressjs, Socket.io and MongoDB
+Printer Jobs App build on a Stack of Angular4 + Bootstrap, Expressjs, Socket.io and MongoDB
 
 # Pre-reqs
 To build and run this app locally you will need a few things:
