@@ -12,6 +12,7 @@ To build and run this app locally you will need a few things:
 	   
 - After clone\download please do:</br>
 	npm install for both angular-client and express-server projects
+	npm install -g @angular/cli
 - Devlopment:</br>
 	angular-client: ng serve</br>
 	express-server: npm start</br>
